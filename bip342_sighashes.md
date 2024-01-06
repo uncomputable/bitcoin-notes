@@ -41,7 +41,7 @@ if hash_type is SINGLE:
 return m
 ```
 
-## Message(hash_type: u8) -> [u8]
+## Message(hash_type: u8) -> [u8; 32]
 
 ```
 return hash_TapSighash(hash_type || SigMsg(hash_type, 0x00))
@@ -65,7 +65,7 @@ e += 0x00 (key version)
 e += code separator version (SegWit detail)
 ```
 
-## `Message(hash_type: u8) -> [u8]
+## Message(hash_type: u8) -> [u8; 32]
 
 ```
 return hash_TapSighash(hash_type || SigMsg(hash_type, 0x01) || Ext)

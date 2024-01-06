@@ -64,7 +64,7 @@ e += code separator version (SegWit detail)
 
 `key_version` is set to `0x01`.
 
-## Message(hash_type: u8) -> [u8]
+## Message(hash_type: u8) -> [u8; 32]
 
 ```
 return hash_TapSighash(hash_type || SigMsg(hash_type, 0x01) || Ext(hash_type))
