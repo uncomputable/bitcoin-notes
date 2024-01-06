@@ -1,11 +1,53 @@
+# OP_TXHASH
+
+## Usage
+
+```
+<tx_field_sector> OP_TXHASH
+```
+
+## Execution
+
+- require at least 1 stack element
+    - topmost: `tx_field_sector` (bytes)
+    - fail otherwise
+- parse `tx_field_sector`
+    - fail otherwise
+- `hash` := tx hash based on `tx_field_sector`
+- push hash
+
+## Explanation
+
+The tx hash commits to the selected fields of the selected inputs / outputs of the spending transaction.
+
+# OP_TXHASHVERIFY
+```
+<expected_hash || tx_field_sector> OP_TXHASHVERIFY
+```
+
+## Execution
+
+- require at least 1 stack element
+    - topmost: `tx_hash || tx_field_sector` (bytes)
+    - fail otherwise
+- if `expected_hash || tx_field_sector` is less than 32 bytes
+    - fail
+- `expected_hash` := first 32 bytes of `expected_hash || tx_field_sector`
+- `tx_field_sector` := remaining bytes of `expected_hash || tx_field_sector`
+- parse `tx_field_sector`
+    - fail otherwise
+- `hash` := tx hash based on `tx_field_sector`
+- if `hash` != `expected_hash`
+    - fail
+
 # TxFieldSector
 
 ## First byte
 
 | Bit | Name                        |
 |-----|-----------------------------|
-| 0   | version                     |
-| 1   | locktime                    |
+| 0   | tx version                  |
+| 1   | tx locktime                 |
 | 2   | current input index         |
 | 3   | current input control block |
 | 4   | current input codesep pos   |
@@ -19,16 +61,18 @@ If the control bit is set, then the TxFieldSector itself is included in the hash
 
 Expected if `inputs?` or `outputs?` is set.
 
-| Bit | Name                      |
-|-----|---------------------------|
-| 0   | all spent outpoints       |
-| 1   | all input sequences       |
-| 2   | all input scriptSig's     |
-| 3   | all spent scriptPubKey's  |
-| 4   | all spent amounts         |
-| 5   | all input annexes         |
-| 6   | all output scriptPubKey's |
-| 7   | all output amounts        |
+| Bit | Name                  |
+|-----|-----------------------|
+| 0   | spent outpoints       |
+| 1   | input sequences       |
+| 2   | input scriptSig's     |
+| 3   | spent scriptPubKey's  |
+| 4   | spent amounts         |
+| 5   | input annexes         |
+| 6   | output scriptPubKey's |
+| 7   | output amounts        |
+
+These bits select which parts of the selected inputs / outputs are hashed.
 
 ## Input bytes
 
