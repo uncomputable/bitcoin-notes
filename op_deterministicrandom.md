@@ -23,16 +23,20 @@
 - nRange := largest multiple of nMax less equal u64::MAX
 - initialize hash engine with seed
 - i := 0
-- j := 3
-- while nRange < nRand
-    - if 3 <= j
-        - write i into hash engine (updating current midstate)
-        - j := 0
-    - nRand := j-th quarter of current hash midstate
-        - each quarter is 64 bits long
-    - j += 1
+- do
+    - write i into hash engine (updating current midstate)
+    - hash := current hash midstate
+    - nRand := if hash[0..8] < nRange:
+        - hash[0..8]
+    - else if hash[8..16] < nRange:
+        - hash[8..16]
+    - else if hash[16..24] < nRange:
+        - hash[16..24]
+    - else:
+        - hash[24..32]
+- while nRand < nRange
 - bnRand := nRand % nMax + bnMin
-- assert bnMin <= bnRand <= bnMax
+- assert bnMin <= bnRand < bnMax
 - pop three stack elements
 - push bnRand
 - return
