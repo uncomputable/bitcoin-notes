@@ -77,7 +77,7 @@ Enforce that the output at the trigger index has a particular taptree:
 
 Take the taptree of the spent vault UTXO and replace the current leaf with the leaf update script.
 
-If there is a revault index, then run CheckRevault. Otherwise, `revault_index = 0` is mandatory to prevent malleability.
+If there is a revault index, then run CheckRevault. Otherwise, `revault_amount = 0` is mandatory to prevent malleability.
 
 Enforce that all satoshis of the spent vault UTXO go into the trigger and revault output.
 
