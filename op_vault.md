@@ -1,3 +1,49 @@
+# Example
+
+## Initial vault UTXO
+
+- Taproot output
+    - internal key
+    - trigger leaf
+        - `<trigger_pk> OP_CHECKSIG 0 -1 0 <ctv_hash> <2w> 2 "OP_CSV OP_DROP OP_CTV" OP_VAULT`
+        - auth via `trigger_pk`
+        - disable revaulting
+        - future trigger output at index 0
+        - template `<ctv_hash>` + `<2w>` + `OP_CSV OP_DROP OP_CTV`
+    - recover leaf
+        - `<recover_pk> OP_CHECKSIG <recover_spk_hash> 0 OP_VAULT_RECOVER`
+        - auth via `recover_pk`
+        - future recovery output at index 0
+        - recovery scriptPubKey hash = `recovery_spk_hash`
+
+## Trigger transaction
+
+- input
+    - trigger leaf of initial vault UTXO
+- output
+    - Taproot output
+        - internal key
+        - withdraw leaf
+            - `<ctv_hash> <2w> OP_CSV OP_DROP OP_CTV`
+            - withdrawal output must satisfy `ctv_hash`
+            - withdrawal output must be 2 weeks older than trigger UTXO
+        - recover leaf
+            - `<recover_pk> <recover_spk_hash> 0 OP_VAULT_RECOVER`
+
+## Withdrawal transaction
+
+- input
+    - withdraw leaf of trigger UTXO
+- output
+    - satisfies `ctv_hash`
+
+## Recovery transaction
+
+- input
+    - recover leaf of initial vault UTXO or of trigger UTXO
+- output
+    - scriptPubKey = `recover_spk_hash`
+
 # OP_VAULT
 
 ## Usage
