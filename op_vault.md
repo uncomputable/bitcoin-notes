@@ -122,7 +122,54 @@ Index and amount are again arguments.
 
 `OP_VAULT` enforces that all satoshis of the spent vault UTXO go into the trigger and revault output.
 
-## References
+# OP_VAULT_RECOVERY
+
+## Usage
+
+```
+<recovery_spk_hash> <recovery_index> OP_VAULT_RECOVERY
+```
+
+## Execution
+
+- require 2 stack items
+    - `recovery_spk_hash` (32 bytes)
+    - `recovery_index` (number)
+    - fail otherwise
+- CheckVaultRecovery(`recovery_spk_hash`, `recovery_index`)
+- pop 2 stack elements
+- push TRUE
+
+## Explanation
+
+`OP_VAULT_RECOVERY` parses a list of arguments:
+
+1. `recovery_spk_hash`
+2. `recovery_index`
+
+If `CheckVaultRecovery` succeeds, then the arguments are popped off the stack and `TRUE` is pushed onto the stack.
+
+## CheckVaultRecovery(`recovery_spk_hash`: [u8; 32], `recovery_index`: u32)
+
+- `recovery_out` := output at `recovery_index`
+    - fail if output doesn't exist
+- `expected_spk_hash` := sha256 of scriptPubKey of `recoveryOut`
+- if `recovery_spk_hash` != `expected_spk_hash`
+    - fail
+- if amount of `recovery_out` < amount of current input (UTXO)
+    - fail
+- if 0xfffffffd = `MAX_BIP125_RBF_SEQUENCE` < current sequence
+    - fail
+- _(making sure that other outputs are ephemeral anchors)_
+    - I skipped the details because I don't understand ephemeral anchors
+
+## Explanation
+
+Enforce that all satoshis of the spent vault UTXO go into the recovery output.
+
+Enforce that the transaction is replacable via RBF.
+
+# References
 
 [Draft BIP (outdated)](https://github.com/jamesob/bips/blob/jamesob-23-03-opvault-rework/bip-vaults.mediawiki)
 
