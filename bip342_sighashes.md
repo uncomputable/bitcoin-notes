@@ -26,7 +26,7 @@ if hash_type is not ANYONECANPAY:
 if hash_type is not (NONE or SINGLE):
     m += all outputs
 m += (ext_flag * 2) + u8::from(annex is present)
-if hash_type is not ANYONECANPAY:
+if hash_type is ANYONECANPAY:
     m += current spent outpoint
     m += current spent amount
     m += current spent scriptPubKey
